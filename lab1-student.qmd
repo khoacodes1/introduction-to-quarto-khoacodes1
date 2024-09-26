@@ -1,7 +1,7 @@
 ---
 title: "Lab 1: Introduction to Quarto"
 author: "Khoa Dang"
-date: "9/26/24"
+date: "9/27/24"
 format: html
 editor: source
 embed-resources: true
