@@ -6,7 +6,15 @@ format: html
 editor: source
 embed-resources: true
 execute:
+  output: true
+  error: true
   echo: false
+code-fold: true
+
+toc: true
+toc-depth: 2
+
+theme: yeti
 ---
 
 # Part Two: Exploring Quarto Documents
@@ -23,14 +31,18 @@ provides descriptions on the options you can specify in a document's execution.
 options, (1) your source code is always output on the page, and (2) your
 document will render even if there are errors.
 
-## Running the Provided Code
+## Tooth Growth Dataset
 
 ```{r}
 #| eval: false
 #| echo: true
 #| label: practicing-running-code
 
-1 + 1
+# Load a dataset into the R Environment.
+data(ToothGrowth)
+
+# Look at the summary of the variables in the dataset.
+summary(ToothGrowth)
 ```
 
 **Question 3** -- Let's spice this code up a bit. Delete `1 + 1` from the code
@@ -42,11 +54,11 @@ chunk and paste in the code provided in the Lab 1 instructions.
 `?ToothGrowth` (or alternatively `help(ToothGrowth)`.Use the information that
 pops up in the *Help* pane in RStudio to fill in the blanks below. 
 
-*This dataset investigates the effect of _____ on tooth growth in ____.*
+*This dataset investigates the effect of Vitamin C on tooth growth in Guinea Pigs.*
 
-*The two supplement delivery methods include OJ (____) and VC (____).*
+*The two supplement delivery methods include OJ (orange juice) and VC (Vitamin C).*
 
-*`ToothGrowth` is a data frame with ___observations and ____ variables.*
+*`ToothGrowth` is a data frame with 60 observations and 3 variables.*
 
 **Question 5** -- *Before* the code chunk, change the "Running the Provided
 Code" section header to a header that better describes the contents of this
@@ -57,10 +69,26 @@ section (e.g., Tooth Growth Dataset).
 **Question 6** -- Replace the `plot(pressure)` code with the code provided in the Lab 1 instructions.
 
 ```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Graph of Supplement vs. Length of Teeth (mm)"
+#|   - "Graph of Dose of Supplement (mg/day) vs. Length of Teeth (mm)"
+#|fig-align: center
 #| echo: true
 #| label: creating-a-plot
 
-plot(pressure)
+library(tidyverse)
+
+ggplot(data = ToothGrowth, 
+       mapping = aes(x = supp, y = len)) +
+  geom_boxplot() +
+  labs(x = "Supplement", y = "Length of Teeth (mm)")
+
+ToothGrowth %>% 
+  mutate(dose = as.factor(dose)) %>% 
+  ggplot(mapping = aes(x = dose, y = len)) +
+  geom_boxplot() +
+  labs(x = "Dose of Supplement (mg/day)", y = "Length of Teeth (mm)")
 ```
 
 Now, run this code chunk! You should see two side-by-side boxplots, one plot
@@ -77,3 +105,10 @@ should be **center aligned**.
 **Question 9** -- Specify a **figure caption** for the boxplots (using a
 code-chunk option).
 
+## Two Sample T Test on Tooth Growth for Guinea Pigs
+
+```{r}
+t.test(len~supp, data = ToothGrowth)
+```
+1. Since, our p-value of 0.06, there is weak evidence that the true difference in means between the length of tooth growth in Guinea pigs for the two supplements is not zero. Therefore, we fail to reject the null hypothesis that supplements like Vitamin C or Orange Juice have no diffrerence in tooth growth for Guinea pigs.
+2. We are 95% confident that the difference in means for the tooth growth of Guinea pigs between Vitamin C or Orange Juice lies between (-0.171, 7.571) mg/day. 
